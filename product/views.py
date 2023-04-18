@@ -18,7 +18,7 @@ def product_detail_api_view(request, id):
         product = Product.objects.get(id=id)
     except Product.DoesNotExist:
         return Response(data={'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-    data_dict = ProductSerializer(product, many=True).data
+    data_dict = ProductSerializer(product, many=False).data
     return Response(data=data_dict)
 
 
@@ -35,7 +35,7 @@ def review_detail_api_view(request, id):
         review = Review.objects.get(id=id)
     except Review.DoesNotExist:
         return Response(data={'error': 'Review not found'}, status=status.HTTP_404_NOT_FOUND)
-    data_dict = ReviewSerializer(review, many=True).data
+    data_dict = ReviewSerializer(review, many=False).data
     return Response(data=data_dict)
 
 
@@ -52,5 +52,5 @@ def category_detail_api_view(request, id):
         category = Category.objects.get(id=id)
     except Category.DoesNotExist:
         return Response(data={'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
-    data_dict = CategorySerializer(category, many=True).data
+    data_dict = CategorySerializer(category, many=False).data
     return Response(data=data_dict)
