@@ -5,13 +5,15 @@ from product.models import Product, Review, Category
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = '__all__'
+        fields = 'id title description price category'.split()
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = 'product text stars'.split()
 
 
 class CategorySerializer(serializers.ModelSerializer):

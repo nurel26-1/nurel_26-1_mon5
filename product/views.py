@@ -1,3 +1,4 @@
+from django.db.models import Avg, Count
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -42,8 +43,9 @@ def review_detail_api_view(request, id):
 @api_view(['GET'])
 def category_list_api_view(request):
     categories = Category.objects.all()
+    products_count = Category.objects.aggregate(count_products=Count('category'))
     data_dict = CategorySerializer(categories, many=True).data
-    return Response(data=data_dict)
+    return Response(data=[data_dict, products_count])
 
 
 @api_view(['GET'])
@@ -54,3 +56,11 @@ def category_detail_api_view(request, id):
         return Response(data={'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
     data_dict = CategorySerializer(category, many=False).data
     return Response(data=data_dict)
+
+
+@api_view(['GET'])
+def products_reviews_api_view(request):
+    products_reviews = Review.objects.all()
+    avg_stars = Review.objects.aggregate(avg=Avg('stars'))
+    data_dict = ReviewSerializer(products_reviews, many=True).data
+    return Response(data=[data_dict, avg_stars])
