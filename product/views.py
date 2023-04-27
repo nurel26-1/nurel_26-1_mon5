@@ -19,7 +19,7 @@ def product_list_api_view(request):
         category_id = request.data.get('category_id')
         product = Product.objects.create(title=title, description=description, price=price, category_id=category_id)
         product.save()
-        return Response()
+        return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -37,10 +37,10 @@ def product_detail_api_view(request, id):
         product.price = request.data.get('price')
         product.category_id = request.data.get('category_id')
         product.save()
-        return Response()
+        return Response(status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
         product.delete()
-        return Response()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'POST'])
@@ -55,7 +55,7 @@ def review_list_api_view(request):
         product_id = request.data.get('product_id')
         review = Review.objects.create(text=text, stars=stars, product_id=product_id)
         review.save()
-        return Response()
+        return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -72,10 +72,10 @@ def review_detail_api_view(request, id):
         review.stars = request.data.get('stars')
         review.product_id = request.data.get('product_id')
         review.save()
-        return Response()
+        return Response(status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
         review.delete()
-        return Response()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'POST'])
@@ -89,7 +89,7 @@ def category_list_api_view(request):
         name = request.data.get('name')
         category = Category.objects.create(name=name)
         category.save()
-        return Response()
+        return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -104,10 +104,10 @@ def category_detail_api_view(request, id):
     elif request.method == 'POST':
         category.name = request.data.get('name')
         category.save()
-        return Response()
+        return Response(status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
         category.delete()
-        return Response()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
