@@ -32,3 +32,5 @@ class Review(models.Model):
     #         return self.text , self.stars
     #     else:
     #         return f"No reviews here"
+
+
