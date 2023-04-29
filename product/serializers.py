@@ -1,22 +1,24 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from product.models import Product, Review, Category
+from rest_framework.response import Response
+
+from product.models import Product, Review, Category, Tag
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = 'name'.split()
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = 'name'.split()
 
 
 class CategoryValidateSerializer(serializers.Serializer):
     name = serializers.CharField()
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = 'id title description price category'.split()
 
 
 class ProductValidateSerializer(serializers.Serializer):
@@ -24,6 +26,9 @@ class ProductValidateSerializer(serializers.Serializer):
     description = serializers.CharField(required=False)
     price = serializers.IntegerField()
     category_id = serializers.IntegerField(min_value=1)
+    tags = serializers.ListField(child=serializers.IntegerField())
+
+    # missing_tags = serializers.SerializerMethodField(read_only=True)
 
     def validate_category_id(self, category_id):
         try:
@@ -31,6 +36,26 @@ class ProductValidateSerializer(serializers.Serializer):
         except Category.DoesNotExist:
             raise ValidationError('Category does not exist')
         return category_id
+
+    def validate_tags(self, tags):
+        missing = []
+        for i, tag_id in enumerate(tags):
+            try:
+                Tag.objects.get(id=tag_id)
+            except Tag.DoesNotExist:
+                missing.append(tag_id)
+        if missing:
+            raise ValidationError({"tag does not exist": missing})
+        return tags
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True)
+    category = CategorySerializer()
+
+    class Meta:
+        model = Product
+        fields = 'id title description price category tags'.split()
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -52,3 +77,10 @@ class ReviewValidateSerializer(serializers.Serializer):
         except Review.DoesNotExist:
             raise ValidationError('Review does not exist')
         return product_id
+
+# {
+#     "title": "ffuuucck",
+#     "price": 3,
+#     "category_id": 2,
+#     "tags": [1,8,9]
+# }

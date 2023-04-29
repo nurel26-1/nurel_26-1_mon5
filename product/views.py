@@ -2,8 +2,8 @@ from django.db.models import Avg, Count
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from product.models import Product, Review, Category
-from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, \
+from product.models import Product, Review, Category, Tag
+from product.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, TagSerializer, \
     ProductValidateSerializer, CategoryValidateSerializer, ReviewValidateSerializer
 
 
@@ -21,7 +21,9 @@ def product_list_api_view(request):
         description = serializer.validated_data.get('description')
         price = serializer.validated_data.get('price')
         category_id = serializer.validated_data.get('category_id')
+        tags = serializer.validated_data.get('tags')
         product = Product.objects.create(title=title, description=description, price=price, category_id=category_id)
+        product.tags.set(tags)
         product.save()
         return Response(status=status.HTTP_201_CREATED)
 
@@ -42,6 +44,8 @@ def product_detail_api_view(request, id):
         product.description = serializer.validated_data.get('description')
         product.price = serializer.validated_data.get('price')
         product.category_id = serializer.validated_data.get('category_id')
+        tags = serializer.validated_data.get('tags')
+        product.tags.set(tags)
         product.save()
         return Response(status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
@@ -123,6 +127,42 @@ def category_detail_api_view(request, id):
     elif request.method == 'DELETE':
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# @api_view(['GET', 'POST'])
+# def tags_api_view(request):
+#     if request.method == 'GET':
+#         tags = Tag.objects.all()
+#         data_dict = TagSerializer(tags, many=True).data
+#         return Response(data=data_dict)
+#     elif request.method == 'POST':
+#         serializer = TagValidateSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         name = serializer.validated_data.get('name')
+#         tag = Tag.objects.create()
+#         tag.name.set(name)
+#         tag.save()
+#         return Response()
+
+
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def tag_detail_api_view(request, id):
+#     try:
+#         tag = Tag.objects.get(id=id)
+#     except Tag.DoesNotExist:
+#         return Response(data={'errors': 'Tag does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#     if request.method == 'GET':
+#         data_dict = TagSerializer(tag, many=False).data
+#         return Response(data_dict)
+#     elif request.method == 'PUT':
+#         serializer = TagSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         tag.name = serializer.validated_data.get('name')
+#         tag.save()
+#         return Response(status=status.HTTP_200_OK)
+#     elif request.method == 'DELETE':
+#         tag.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
