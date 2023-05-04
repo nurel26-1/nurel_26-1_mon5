@@ -7,8 +7,4 @@ urlpatterns = [
     path('confirm/', views.confirm_user)
 ]
 
-# {
-#     "username": "nurel123",
-#     "password": 123,
-#     "email": "nlomurzakov@gmail.com"
-# }
+
