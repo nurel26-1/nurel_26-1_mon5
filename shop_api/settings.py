@@ -90,12 +90,13 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    'PAGE_PAGINATION': 2
 }
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'nlomurzakov@gmail.com'
+EMAIL_HOST_USER = 'mygmailis@gmail.com'
 EMAIL_HOST_PASSWORD = '12345678'
 EMAIL_PORT = 587
 

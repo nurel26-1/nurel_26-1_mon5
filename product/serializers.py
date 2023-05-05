@@ -11,6 +11,10 @@ class TagSerializer(serializers.ModelSerializer):
         fields = 'name'.split()
 
 
+class TagValidateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
