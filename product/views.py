@@ -128,6 +128,7 @@ class ReviewListAPIView(ListCreateAPIView):
         review.save()
         return Response(status=status.HTTP_201_CREATED)
 
+
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def review_detail_api_view(request, id):
 #     try:
@@ -164,6 +165,7 @@ class ReviewDetailAPIView(RetrieveUpdateDestroyAPIView):
         review.save()
         return Response(status=status.HTTP_200_OK)
 
+
 # @api_view(['GET', 'POST'])
 # def category_list_api_view(request):
 #     if request.method == 'GET':
@@ -180,10 +182,16 @@ class ReviewDetailAPIView(RetrieveUpdateDestroyAPIView):
 #         return Response(status=status.HTTP_201_CREATED)
 
 
-class CategoryListAPIView(ListCreateAPIView):
+class CategoryListAPIView(APIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
+
+    def get(self, request):
+        categories = Category.objects.all()
+        products_count = Category.objects.aggregate(count_products=Count('category'))
+        data_dict = CategorySerializer(categories, many=True).data
+        return Response(data=[data_dict, products_count])
 
     def post(self, request, *args, **kwargs):
         serializer = CategoryValidateSerializer(data=request.data)
@@ -192,6 +200,7 @@ class CategoryListAPIView(ListCreateAPIView):
         category = Category.objects.create(name=name)
         category.save()
         return Response(status=status.HTTP_201_CREATED)
+
 
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def category_detail_api_view(request, id):
@@ -278,9 +287,9 @@ class TagDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-    def put(self, request, pk,  *args, **kwargs):
+    def put(self, request, pk, *args, **kwargs):
         tag = Tag.objects.get(pk=pk)
-        serializer = TagSerializer(tag, data=request.data)
+        serializer = TagValidateSerializer(tag, data=request.data)
         serializer.is_valid(raise_exception=True)
         tag.name = serializer.validated_data.get('name')
         tag.save()
